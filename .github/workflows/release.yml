@@ -160,6 +160,48 @@ jobs:
           name: ${{ env.BINARY_NAME }}-x86_64-pc-windows-msvc
           path: ${{ env.BINARY_NAME }}-x86_64-pc-windows-msvc.zip
 
+  build-android:
+    name: Build Android APK (aarch64)
+    needs: test
+    runs-on: ubuntu-latest
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libssl-dev libsqlite3-dev pkg-config \
+            llvm clang libclang-dev \
+            libxcursor-dev libx11-dev libasound2-dev \
+            libpulse-dev libwayland-dev libxkbcommon-dev
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-makepad
+        run: cargo install --force --git https://github.com/makepad/makepad --branch dev cargo-makepad
+
+      - name: Install Android toolchain
+        run: cargo makepad android install-toolchain --full-ndk
+
+      - name: Build Android APK
+        run: |
+          cargo makepad android build -p peerbox-desktop --release
+
+      - name: Find and copy APK
+        run: |
+          APK=$(find target -name "*.apk" -type f | head -1)
+          if [ -n "$APK" ]; then
+            cp "$APK" "${{ env.BINARY_NAME }}-desktop-android-aarch64.apk"
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.BINARY_NAME }}-android-apk
+          path: ${{ env.BINARY_NAME }}-desktop-android-aarch64.apk
+
   docker:
     name: Docker
     needs: test
@@ -241,6 +283,7 @@ jobs:
       - build-macos-intel
       - build-macos-arm
       - build-windows
+      - build-android
       - docker
       - helm
     runs-on: ubuntu-latest

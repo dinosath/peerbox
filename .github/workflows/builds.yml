@@ -1,0 +1,178 @@
+name: Builds
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'crates/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
+      - '.github/**'
+      - '!**/*.md'
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches:
+      - main
+    paths:
+      - 'crates/**'
+      - 'Cargo.toml'
+      - 'Cargo.lock'
+      - 'rust-toolchain.toml'
+      - '.github/**'
+      - '!**/*.md'
+
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-desktop-linux:
+    name: Build Desktop (Linux)
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libssl-dev \
+            libsqlite3-dev \
+            pkg-config \
+            llvm \
+            clang \
+            libclang-dev \
+            libxcursor-dev \
+            libx11-dev \
+            libasound2-dev \
+            libpulse-dev \
+            libwayland-dev \
+            libxkbcommon-dev
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: desktop-linux-${{ hashFiles('Cargo.lock') }}
+
+      - name: Build desktop
+        env:
+          RUSTFLAGS: "-D warnings"
+        run: cargo build -p peerbox-desktop --release
+
+  build-desktop-macos:
+    name: Build Desktop (macOS)
+    runs-on: macos-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: desktop-macos-${{ hashFiles('Cargo.lock') }}
+
+      - name: Build desktop
+        env:
+          RUSTFLAGS: "-D warnings"
+        run: cargo build -p peerbox-desktop --release
+
+  build-desktop-windows:
+    name: Build Desktop (Windows)
+    runs-on: windows-2022
+    if: github.event.pull_request.draft == false
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: desktop-windows-${{ hashFiles('Cargo.lock') }}
+
+      - name: Build desktop
+        env:
+          RUSTFLAGS: "-D warnings"
+        run: cargo build -p peerbox-desktop --release
+
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libssl-dev \
+            libsqlite3-dev \
+            pkg-config \
+            llvm \
+            clang \
+            libclang-dev \
+            libxcursor-dev \
+            libx11-dev \
+            libasound2-dev \
+            libpulse-dev \
+            libwayland-dev \
+            libxkbcommon-dev
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-makepad
+        run: cargo install --force --git https://github.com/makepad/makepad --branch dev cargo-makepad
+
+      - name: Install Android toolchain
+        run: cargo makepad android install-toolchain --full-ndk
+
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          key: android-build-${{ hashFiles('Cargo.lock') }}
+
+      - name: Build Android APK
+        run: |
+          cargo makepad android build -p peerbox-desktop \
+            --config profile.dev.opt-level=0 \
+            --config profile.dev.debug=false \
+            --config profile.dev.lto=\"off\" \
+            --config profile.dev.strip=true \
+            --config profile.dev.debug-assertions=false
+
+  build-summary:
+    name: Build Results Summary
+    runs-on: ubuntu-latest
+    needs:
+      - build-desktop-linux
+      - build-desktop-macos
+      - build-desktop-windows
+      - build-android
+    if: always()
+    steps:
+      - run: |
+          echo "=== Desktop Builds ==="
+          echo "Linux:   ${{ needs.build-desktop-linux.result }}"
+          echo "macOS:   ${{ needs.build-desktop-macos.result }}"
+          echo "Windows: ${{ needs.build-desktop-windows.result }}"
+          echo "=== Android Build ==="
+          echo "Android: ${{ needs.build-android.result }}"

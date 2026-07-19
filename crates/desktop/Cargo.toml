@@ -4,6 +4,10 @@ version = "0.1.0"
 edition = "2021"
 description = "Peerbox Makepad Desktop Application"
 
+[lib]
+name = "peerbox_desktop"
+path = "src/lib.rs"
+
 [[bin]]
 name = "peerbox-desktop"
 path = "src/main.rs"
@@ -31,3 +35,8 @@ tracing-subscriber = { workspace = true }
 bytes = { workspace = true }
 chrono = { workspace = true }
 async-trait = { workspace = true }
+makepad-widgets = { workspace = true }
+
+[package.metadata.makepad]
+app_name = "Peerbox"
+identifier = "dev.peerbox.desktop"

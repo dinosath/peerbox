@@ -52,3 +52,5 @@ chunking = { path = "crates/chunking" }
 peerbox-server = { path = "crates/server" }
 p2p = { path = "crates/p2p" }
 verification = { path = "crates/verification" }
+
+makepad-widgets = { git = "https://github.com/makepad/makepad", branch = "dev" }
