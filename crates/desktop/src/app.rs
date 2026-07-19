@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use dc_core::Application;
+use peerbox_core::Application;
 
 use crate::commands::file_ops::FileOps;
 use crate::commands::identity_ops::IdentityOps;

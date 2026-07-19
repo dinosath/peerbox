@@ -1,5 +1,5 @@
 [package]
-name = "dc-desktop"
+name = "peerbox-desktop"
 version = "0.1.0"
 edition = "2021"
 description = "Peerbox Makepad Desktop Application"
@@ -14,7 +14,7 @@ objects = { workspace = true }
 database = { workspace = true }
 events = { workspace = true }
 storage = { workspace = true }
-dc-core = { workspace = true }
+peerbox-core = { workspace = true }
 config = { workspace = true }
 manifest = { workspace = true }
 chunking = { workspace = true }

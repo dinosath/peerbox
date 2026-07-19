@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crypto::{CryptoProvider, DefaultCryptoProvider};
 use database::{EventRepository, ObjectRepository};
 use database::{SqliteEventRepository, SqliteObjectRepository};
-use dc_core::Application;
+use peerbox_core::Application;
 use events::EventBus;
 use objects::FileObject;
 use storage::MemoryStorageProvider;

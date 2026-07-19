@@ -1,16 +1,16 @@
 [package]
-name = "dcc"
+name = "peerbox-cli"
 version = "0.1.0"
 edition = "2021"
-description = "Decentralized Cloud CLI"
+description = "Peerbox CLI"
 
 [[bin]]
-name = "dcc"
+name = "peerbox"
 path = "src/main.rs"
 
 [dependencies]
 common = { workspace = true }
-dc-core = { workspace = true }
+peerbox-core = { workspace = true }
 crypto = { workspace = true }
 config = { workspace = true }
 database = { workspace = true }

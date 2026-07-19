@@ -13,7 +13,7 @@ use tokio::sync::Mutex;
 use common::ObjectId;
 use crypto::{CryptoProvider, DefaultCryptoProvider};
 use database::{EventRepository, ObjectRepository, StoredEvent, StoredObject};
-use dc_core::Application;
+use peerbox_core::Application;
 use events::EventBus;
 use storage::{MemoryStorageProvider, StorageProvider};
 

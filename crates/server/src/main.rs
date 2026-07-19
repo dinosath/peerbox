@@ -5,7 +5,7 @@ use anyhow::Result;
 use crypto::DefaultCryptoProvider;
 use database::StoredEvent;
 use events::EventBus;
-use server::state::AppState;
+use peerbox_server::state::AppState;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -23,7 +23,7 @@ async fn main() -> Result<()> {
     let storage = Arc::new(storage::MemoryStorageProvider::new());
     let event_repo = Arc::new(InMemoryEventRepository::new());
 
-    let application = Arc::new(dc_core::Application::new(
+    let application = Arc::new(peerbox_core::Application::new(
         object_repo,
         event_bus,
         storage,
@@ -36,7 +36,7 @@ async fn main() -> Result<()> {
         node_id,
     });
 
-    server::run_server(state, addr).await?;
+    peerbox_server::run_server(state, addr).await?;
     Ok(())
 }
 

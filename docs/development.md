@@ -31,8 +31,8 @@ cargo build
 cargo build --release
 
 # Build specific crate
-cargo build -p dc-server
-cargo build -p dcc
+cargo build -p peerbox-server
+cargo build -p peerbox-cli
 
 # Cross-compile for ARM64 (requires cross or target toolchain)
 rustup target add aarch64-unknown-linux-gnu
@@ -42,35 +42,35 @@ cargo build --release --target aarch64-unknown-linux-gnu
 ## Running the Server
 
 ```bash
-cargo run -p dc-server
+cargo run -p peerbox-server
 
 # With custom address
-LISTEN_ADDR=0.0.0.0:8080 cargo run -p dc-server
+LISTEN_ADDR=0.0.0.0:8080 cargo run -p peerbox-server
 ```
 
 ## Running the CLI
 
 ```bash
 # Initialize a node
-cargo run -p dcc -- init
+cargo run -p peerbox-cli -- init
 
 # Show node status
-cargo run -p dcc -- status
+cargo run -p peerbox-cli -- status
 
 # Show node identity
-cargo run -p dcc -- identity
+cargo run -p peerbox-cli -- identity
 
 # Upload a file
-cargo run -p dcc -- upload /path/to/file
+cargo run -p peerbox-cli -- upload /path/to/file
 
 # Download by object ID
-cargo run -p dcc -- download <object-id>
+cargo run -p peerbox-cli -- download <object-id>
 
 # Sync with peers
-cargo run -p dcc -- sync
+cargo run -p peerbox-cli -- sync
 
 # List peers
-cargo run -p dcc -- peers
+cargo run -p peerbox-cli -- peers
 ```
 
 ## Running Tests
@@ -91,8 +91,8 @@ cargo test -p storage
 cargo test -p crypto
 cargo test -p core
 cargo test -p config
-cargo test -p server
-cargo test -p dcc
+cargo test -p peerbox-server
+cargo test -p peerbox-cli
 cargo test -p chunking
 cargo test -p manifest
 cargo test -p verification

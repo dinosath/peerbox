@@ -517,82 +517,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "dc-core"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytes",
- "chrono",
- "common",
- "crypto",
- "database",
- "events",
- "hex",
- "objects",
- "serde",
- "serde_json",
- "storage",
- "tokio",
- "tracing",
-]
-
-[[package]]
-name = "dc-desktop"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "bytes",
- "chrono",
- "chunking",
- "common",
- "config",
- "crypto",
- "database",
- "dc-core",
- "events",
- "federation",
- "manifest",
- "objects",
- "p2p",
- "serde",
- "serde_json",
- "storage",
- "tokio",
- "tracing",
- "tracing-subscriber",
- "verification",
-]
-
-[[package]]
-name = "dcc"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bytes",
- "chrono",
- "clap",
- "common",
- "config",
- "crypto",
- "database",
- "dc-core",
- "dirs",
- "events",
- "federation",
- "hex",
- "manifest",
- "objects",
- "p2p",
- "serde_json",
- "storage",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
-
-[[package]]
 name = "der"
 version = "0.7.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1252,9 +1176,9 @@ dependencies = [
  "common",
  "crypto",
  "database",
- "dc-core",
  "events",
  "objects",
+ "peerbox-core",
  "serde_json",
  "sqlx",
  "storage",
@@ -1559,6 +1483,112 @@ dependencies = [
  "redox_syscall 0.5.18",
  "smallvec",
  "windows-link",
+]
+
+[[package]]
+name = "peerbox-cli"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytes",
+ "chrono",
+ "clap",
+ "common",
+ "config",
+ "crypto",
+ "database",
+ "dirs",
+ "events",
+ "federation",
+ "hex",
+ "manifest",
+ "objects",
+ "p2p",
+ "peerbox-core",
+ "serde_json",
+ "storage",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
+name = "peerbox-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bytes",
+ "chrono",
+ "common",
+ "crypto",
+ "database",
+ "events",
+ "hex",
+ "objects",
+ "serde",
+ "serde_json",
+ "storage",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "peerbox-desktop"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "bytes",
+ "chrono",
+ "chunking",
+ "common",
+ "config",
+ "crypto",
+ "database",
+ "events",
+ "federation",
+ "manifest",
+ "objects",
+ "p2p",
+ "peerbox-core",
+ "serde",
+ "serde_json",
+ "storage",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+ "verification",
+]
+
+[[package]]
+name = "peerbox-server"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum",
+ "bytes",
+ "chrono",
+ "common",
+ "config",
+ "crypto",
+ "database",
+ "events",
+ "federation",
+ "hex",
+ "manifest",
+ "objects",
+ "peerbox-core",
+ "serde",
+ "serde_json",
+ "storage",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tracing",
+ "tracing-subscriber",
+ "uuid",
 ]
 
 [[package]]
@@ -2038,36 +2068,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "server"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "async-trait",
- "axum",
- "bytes",
- "chrono",
- "common",
- "config",
- "crypto",
- "database",
- "dc-core",
- "events",
- "federation",
- "hex",
- "manifest",
- "objects",
- "serde",
- "serde_json",
- "storage",
- "tokio",
- "tower",
- "tower-http",
- "tracing",
- "tracing-subscriber",
- "uuid",
 ]
 
 [[package]]

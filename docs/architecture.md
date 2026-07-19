@@ -10,7 +10,7 @@ Peerbox is a decentralized, local-first platform built in Rust. It provides a lo
 +------------------------------------------------------------------+
 |                        APPLICATIONS                               |
 |  +----------+  +----------+  +----------+  +-----------+          |
-|  | dc-server|  |   dcc    |  | Desktop  |  |  Future   |          |
+|  | peerbox-server|  |  peerbox |  | Desktop  |  |  Future   |          |
 |  | (HTTP)   |  |   (CLI)  |  |  (GUI)   |  |  Clients  |          |
 |  +----+-----+  +----+-----+  +----+-----+  +-----+-----+          |
 |       |             |             |               |                |
@@ -53,8 +53,8 @@ Peerbox is a decentralized, local-first platform built in Rust. It provides a lo
 ## Layer Descriptions
 
 ### Applications
-- **dc-server**: Axum-based HTTP server exposing REST API and ActivityPub endpoints for federation.
-- **dcc (CLI)**: Command-line tool for node management, file upload/download, sync operations, and identity management.
+- **peerbox-server**: Axum-based HTTP server exposing REST API and ActivityPub endpoints for federation.
+- **peerbox (CLI)**: Command-line tool for node management, file upload/download, sync operations, and identity management.
 - **Desktop** (future): GUI application for end-user interaction.
 - **Future Clients**: Mobile, web, or other platform clients.
 
@@ -122,7 +122,7 @@ objects  database  events  storage  crypto
 
 ### Upload
 ```
-Client -> dc-server HTTP POST /objects
+Client -> peerbox-server HTTP POST /objects
   -> ObjectService.create()
   -> Chunker splits data
   -> Manifest generated (Blake3 hashes)
@@ -134,7 +134,7 @@ Client -> dc-server HTTP POST /objects
 
 ### Download
 ```
-Client -> dc-server HTTP GET /objects/{id}
+Client -> peerbox-server HTTP GET /objects/{id}
   -> ObjectService.get()
   -> Manifest retrieved
   -> ChunkAssembler collects chunks from StorageProvider
@@ -144,7 +144,7 @@ Client -> dc-server HTTP GET /objects/{id}
 
 ### Sync
 ```
-dcc sync command
+peerbox sync command
   -> P2P transport discovers peers
   -> Manifest exchange between nodes
   -> ProgressiveVerifier validates incoming chunks

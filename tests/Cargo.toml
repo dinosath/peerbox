@@ -10,7 +10,7 @@ database = { workspace = true }
 events = { workspace = true }
 storage = { workspace = true }
 crypto = { workspace = true }
-dc-core = { workspace = true }
+peerbox-core = { workspace = true }
 tokio = { workspace = true }
 sqlx = { workspace = true }
 serde_json = { workspace = true }

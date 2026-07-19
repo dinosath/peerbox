@@ -5,7 +5,7 @@ A decentralized, local-first platform built in Rust. Peerbox provides a local ap
 ## Architecture
 
 ```
-Applications  -->  dc-server (HTTP)  |  dcc (CLI)  |  Desktop (future)
+Applications  -->  peerbox-server (HTTP)  |  peerbox (CLI)  |  Desktop (future)
                       |
 Core Runtime  -->  ObjectService  |  EventBus  |  Application
                       |
@@ -38,7 +38,7 @@ peerbox/
 │   ├── core/               # Application runtime, object service, DI
 │   ├── config/             # Configuration loading (JSON)
 │   ├── server/             # Axum HTTP server (REST API + ActivityPub)
-│   ├── cli/                # CLI tool (dcc)
+│   ├── cli/                # CLI tool (peerbox)
 │   ├── chunking/           # File chunking/assembly with Blake3
 │   ├── manifest/           # Content manifests with transport options
 │   ├── verification/       # Progressive chunk verification
@@ -62,10 +62,10 @@ peerbox/
 cargo build
 
 # Run the server
-cargo run -p dc-server
+cargo run -p peerbox-server
 
 # Run the CLI
-cargo run -p dcc -- status
+cargo run -p peerbox-cli -- status
 
 # Run tests
 cargo test --workspace
@@ -123,7 +123,7 @@ cargo test --workspace
 # Specific crate
 cargo test -p common
 cargo test -p crypto
-cargo test -p server
+cargo test -p peerbox-server
 
 # With coverage
 cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info

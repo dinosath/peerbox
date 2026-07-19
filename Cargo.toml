@@ -46,9 +46,9 @@ storage = { path = "crates/storage" }
 crypto = { path = "crates/crypto" }
 federation = { path = "crates/federation" }
 config = { path = "crates/config" }
-dc-core = { path = "crates/core" }
+peerbox-core = { path = "crates/core" }
 manifest = { path = "crates/manifest" }
 chunking = { path = "crates/chunking" }
-dc-server = { path = "crates/server" }
+peerbox-server = { path = "crates/server" }
 p2p = { path = "crates/p2p" }
 verification = { path = "crates/verification" }

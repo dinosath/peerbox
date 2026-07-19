@@ -21,7 +21,7 @@
 {{- end }}
 
 2. Check node identity:
-   kubectl exec -n {{ .Release.Namespace }} deploy/{{ include "peerbox.fullname" . }} -- dcc identity
+   kubectl exec -n {{ .Release.Namespace }} deploy/{{ include "peerbox.fullname" . }} -- peerbox identity
 
 3. View logs:
    kubectl logs -n {{ .Release.Namespace }} -l app.kubernetes.io/instance={{ .Release.Name }} --tail=100 -f

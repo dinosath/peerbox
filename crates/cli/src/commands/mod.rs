@@ -14,14 +14,14 @@ use common::NodeId;
 use config::PeerBoxConfig;
 use crypto::{Ed25519CryptoProvider, KeyPair};
 use database::{EventRepository, ObjectRepository, SqliteEventRepository, SqliteObjectRepository};
-use dc_core::Application;
+use peerbox_core::Application;
 use events::EventBus;
 use p2p::simulated::{SimulatedNetwork, SimulatedTransport};
 use p2p::types::PeerId;
 use storage::FileSystemStorageProvider;
 
 #[derive(Parser)]
-#[command(name = "dcc", about = "Decentralized Cloud CLI", version)]
+#[command(name = "peerbox", about = "Peerbox CLI", version)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Commands,
@@ -93,7 +93,7 @@ fn keypair_path() -> PathBuf {
 fn load_keypair() -> anyhow::Result<KeyPair> {
     let path = keypair_path();
     if !path.exists() {
-        anyhow::bail!("No keypair found. Run 'dcc init' to initialize a new node.");
+        anyhow::bail!("No keypair found. Run 'peerbox init' to initialize a new node.");
     }
     let seed_bytes: Vec<u8> = std::fs::read(&path)?;
     let seed: [u8; 32] = seed_bytes

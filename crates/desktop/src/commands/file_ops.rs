@@ -3,7 +3,7 @@ use std::sync::Arc;
 use bytes::Bytes;
 use common::ObjectId;
 use database::StoredObject;
-use dc_core::Application;
+use peerbox_core::Application;
 use objects::{FileObject, FolderObject};
 
 pub struct FileOps {

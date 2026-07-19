@@ -31,8 +31,8 @@ RUN adduser \
     --uid 10001 \
     peerbox
 
-COPY --from=builder /app/target/release/server /usr/local/bin/dc-server
-COPY --from=builder /app/target/release/dcc /usr/local/bin/dcc
+COPY --from=builder /app/target/release/peerbox-server /usr/local/bin/peerbox-server
+COPY --from=builder /app/target/release/peerbox /usr/local/bin/peerbox
 
 ENV LISTEN_ADDR=0.0.0.0:8080
 
@@ -40,4 +40,4 @@ USER peerbox
 
 EXPOSE 8080
 
-ENTRYPOINT ["dc-server"]
+ENTRYPOINT ["peerbox-server"]

@@ -6,23 +6,23 @@
 
 ```bash
 # Build
-cargo build --release -p dc-server
+cargo build --release -p peerbox-server
 
 # Run
-LISTEN_ADDR=0.0.0.0:8080 ./target/release/dc-server
+LISTEN_ADDR=0.0.0.0:8080 ./target/release/peerbox-server
 ```
 
 ### CLI
 
 ```bash
 # Build
-cargo build --release -p dcc
+cargo build --release -p peerbox-cli
 
 # Initialize a node
-./target/release/dcc init
+./target/release/peerbox init
 
 # Start syncing
-./target/release/dcc sync
+./target/release/peerbox sync
 ```
 
 ## Docker Deployment
@@ -58,7 +58,7 @@ docker run -d \
 # CLI mode
 docker run --rm \
   -v peerbox-data:/home/peerbox/.local/share/peerbox \
-  peerbox:latest dcc status
+  peerbox:latest peerbox status
 ```
 
 ## Docker Compose
@@ -71,7 +71,7 @@ docker compose up -d
 docker compose logs -f peerbox-server
 
 # Check node status
-docker compose exec peerbox-server dcc status
+docker compose exec peerbox-server peerbox status
 
 # Stop
 docker compose down
@@ -82,7 +82,7 @@ docker compose down
 | Service | Role | Port | Notes |
 |---------|------|------|-------|
 | `peerbox-server` | HTTP API server | 8080 | REST API + federation |
-| `peerbox-storage` | Storage node | - | `dcc sync` only |
+| `peerbox-storage` | Storage node | - | `peerbox sync` only |
 | `peerbox-federation` | Federation node | - | ActivityPub enabled |
 
 ## Kubernetes Deployment via Helm

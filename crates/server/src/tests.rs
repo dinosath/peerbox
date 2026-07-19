@@ -102,7 +102,7 @@ mod tests {
         let crypto: Arc<dyn crypto::CryptoProvider> = Arc::new(TestCryptoProvider);
         let event_repo = Arc::new(TestEventRepository::new());
 
-        let application = Arc::new(dc_core::Application::new(
+        let application = Arc::new(peerbox_core::Application::new(
             object_repo,
             event_bus,
             storage,
