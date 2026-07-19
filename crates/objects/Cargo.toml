@@ -1,0 +1,12 @@
+[package]
+name = "objects"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+common = { workspace = true }
+serde = { workspace = true }
+chrono = { workspace = true }
+
+[dev-dependencies]
+serde_json = { workspace = true }

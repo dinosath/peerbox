@@ -1,0 +1,36 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/common",
+    "crates/objects",
+    "crates/database",
+    "crates/events",
+    "crates/storage",
+    "crates/crypto",
+    "crates/core",
+    "crates/config",
+    "tests",
+]
+
+[workspace.dependencies]
+tokio = { version = "1", features = ["full"] }
+sqlx = { version = "0.8", features = ["runtime-tokio", "sqlite", "chrono", "uuid", "migrate"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+uuid = { version = "1", features = ["v4", "serde"] }
+chrono = { version = "0.4", features = ["serde"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+thiserror = "2"
+anyhow = "1"
+async-trait = "0.1"
+bytes = "1"
+
+common = { path = "crates/common" }
+objects = { path = "crates/objects" }
+database = { path = "crates/database" }
+events = { path = "crates/events" }
+storage = { path = "crates/storage" }
+crypto = { path = "crates/crypto" }
+config = { path = "crates/config" }
+dc-core = { path = "crates/core" }

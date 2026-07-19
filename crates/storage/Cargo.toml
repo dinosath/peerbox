@@ -1,0 +1,15 @@
+[package]
+name = "storage"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+common = { workspace = true }
+bytes = { workspace = true }
+async-trait = { workspace = true }
+anyhow = { workspace = true }
+tokio = { workspace = true }
+hex = "0.4"
+
+[dev-dependencies]
+tempfile = "3"

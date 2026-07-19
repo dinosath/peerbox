@@ -1,0 +1,13 @@
+/target/
+/data/*.sqlite
+/data/*.sqlite-*
+.env
+.env.local
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.iml
