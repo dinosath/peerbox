@@ -1,0 +1,16 @@
+[package]
+name = "chunking"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+common = { workspace = true }
+bytes = { workspace = true }
+anyhow = { workspace = true }
+thiserror = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+blake3 = "1"
+hex = "0.4"
+futures = "0.3"

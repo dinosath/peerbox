@@ -60,8 +60,8 @@ impl ObjectRepository for SqliteObjectRepository {
         .bind(&object.id)
         .bind(&object.object_type)
         .bind(&data_json)
-        .bind(&object.created_at)
-        .bind(&object.updated_at)
+        .bind(object.created_at)
+        .bind(object.updated_at)
         .execute(&self.pool)
         .await?;
 
@@ -149,15 +149,13 @@ impl EventRepository for SqliteEventRepository {
     async fn store(&self, event: StoredEvent) -> anyhow::Result<()> {
         let payload_json = serde_json::to_string(&event.payload)?;
 
-        sqlx::query(
-            "INSERT INTO events (id, event_type, payload, created_at) VALUES (?, ?, ?, ?)",
-        )
-        .bind(&event.id)
-        .bind(&event.event_type)
-        .bind(&payload_json)
-        .bind(&event.created_at)
-        .execute(&self.pool)
-        .await?;
+        sqlx::query("INSERT INTO events (id, event_type, payload, created_at) VALUES (?, ?, ?, ?)")
+            .bind(&event.id)
+            .bind(&event.event_type)
+            .bind(&payload_json)
+            .bind(event.created_at)
+            .execute(&self.pool)
+            .await?;
 
         Ok(())
     }
@@ -314,9 +312,7 @@ mod tests {
 
     #[tokio::test]
     async fn test_insert_event() {
-        let event_repo = SqliteEventRepository::new("sqlite::memory:")
-            .await
-            .unwrap();
+        let event_repo = SqliteEventRepository::new("sqlite::memory:").await.unwrap();
         let event = StoredEvent {
             id: "evt-1".into(),
             event_type: "ObjectCreated".into(),

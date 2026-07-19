@@ -9,6 +9,7 @@ objects = { workspace = true }
 database = { workspace = true }
 events = { workspace = true }
 storage = { workspace = true }
+crypto = { workspace = true }
 dc-core = { workspace = true }
 tokio = { workspace = true }
 sqlx = { workspace = true }

@@ -1,0 +1,92 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "peerbox.fullname" . }}
+  labels:
+    {{- include "peerbox.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "peerbox.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "peerbox.selectorLabels" . | nindent 8 }}
+        {{- with .Values.podLabels }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "peerbox.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env:
+            - name: PEERBOX_NODE_NAME
+              value: {{ .Values.config.nodeName | quote }}
+            - name: PEERBOX_LISTEN_PORT
+              value: {{ .Values.config.listenPort | quote }}
+            - name: RUST_LOG
+              value: {{ .Values.config.logLevel | quote }}
+            - name: PEERBOX_FEDERATION_ENABLED
+              value: {{ .Values.config.federationEnabled | quote }}
+            - name: LISTEN_ADDR
+              value: {{ printf "0.0.0.0:%d" (int .Values.config.listenPort) | quote }}
+            {{- with .Values.config.bootstrapNodes }}
+            - name: PEERBOX_BOOTSTRAP_NODES
+              value: {{ join "," . | quote }}
+            {{- end }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.config.listenPort }}
+              protocol: TCP
+          volumeMounts:
+            {{- if .Values.persistence.enabled }}
+            - name: data
+              mountPath: /home/peerbox/.local/share/peerbox
+            {{- end }}
+            - name: config
+              mountPath: /home/peerbox/.config/peerbox
+              readOnly: true
+          {{- with .Values.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+      volumes:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "peerbox.pvcName" . }}
+        {{- else }}
+        - name: data
+          emptyDir: {}
+        {{- end }}
+        - name: config
+          configMap:
+            name: {{ include "peerbox.configMapName" . }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

@@ -12,6 +12,12 @@ impl ObjectId {
     }
 }
 
+impl Default for ObjectId {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl fmt::Display for ObjectId {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "{}", self.0)
@@ -36,6 +42,12 @@ pub struct NodeId(pub String);
 impl NodeId {
     pub fn new() -> Self {
         Self(uuid::Uuid::new_v4().to_string())
+    }
+}
+
+impl Default for NodeId {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
@@ -132,6 +144,10 @@ impl ContentHash {
             hash: hex::encode(hash),
         }
     }
+
+    pub fn as_str(&self) -> &str {
+        &self.hash
+    }
 }
 
 impl fmt::Display for ContentHash {
@@ -146,7 +162,7 @@ impl fmt::Debug for ContentHash {
     }
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct ChunkInfo {
     pub index: u64,
     pub offset: u64,

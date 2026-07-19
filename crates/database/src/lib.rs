@@ -36,5 +36,5 @@ pub trait EventRepository: Send + Sync {
 }
 
 mod sqlite;
-pub use sqlite::SqliteObjectRepository;
 pub use sqlite::SqliteEventRepository;
+pub use sqlite::SqliteObjectRepository;

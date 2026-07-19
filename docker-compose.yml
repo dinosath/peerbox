@@ -1,0 +1,39 @@
+version: "3.8"
+
+services:
+  peerbox-server:
+    build: .
+    ports:
+      - "8080:8080"
+    volumes:
+      - peerbox-data:/home/peerbox/.local/share/peerbox
+      - peerbox-config:/home/peerbox/.config/peerbox
+    environment:
+      - PEERBOX_NODE_NAME=server-node
+      - PEERBOX_LISTEN_PORT=8080
+      - RUST_LOG=info
+    restart: unless-stopped
+
+  peerbox-storage:
+    build: .
+    command: dcc sync
+    volumes:
+      - peerbox-storage-data:/home/peerbox/.local/share/peerbox
+    environment:
+      - PEERBOX_NODE_NAME=storage-node
+      - RUST_LOG=info
+    restart: unless-stopped
+
+  peerbox-federation:
+    build: .
+    command: dcc sync
+    environment:
+      - PEERBOX_FEDERATION_ENABLED=true
+      - PEERBOX_NODE_NAME=federation-node
+      - RUST_LOG=info
+    restart: unless-stopped
+
+volumes:
+  peerbox-data:
+  peerbox-config:
+  peerbox-storage-data:

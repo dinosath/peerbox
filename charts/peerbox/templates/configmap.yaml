@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "peerbox.configMapName" . }}
+  labels:
+    {{- include "peerbox.labels" . | nindent 4 }}
+data:
+  config.json: |
+    {
+      "node_name": "{{ .Values.config.nodeName }}",
+      "data_dir": "/home/peerbox/.local/share/peerbox",
+      "database_url": "sqlite:///home/peerbox/.local/share/peerbox/database.sqlite?mode=rwc",
+      "storage_dir": "/home/peerbox/.local/share/peerbox/storage",
+      "listen_port": {{ .Values.config.listenPort }},
+      "bootstrap_nodes": {{ .Values.config.bootstrapNodes | toJson }},
+      "federation_enabled": {{ .Values.config.federationEnabled }},
+      "log_level": "{{ .Values.config.logLevel }}"
+    }

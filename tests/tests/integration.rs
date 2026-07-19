@@ -1,16 +1,15 @@
 use std::sync::Arc;
 
+use crypto::{CryptoProvider, DefaultCryptoProvider};
+use database::{EventRepository, ObjectRepository};
+use database::{SqliteEventRepository, SqliteObjectRepository};
 use dc_core::Application;
-use database::ObjectRepository;
-use database::SqliteObjectRepository;
 use events::EventBus;
 use objects::FileObject;
 use storage::MemoryStorageProvider;
 
 fn init_tracing() {
-    let _ = tracing_subscriber::fmt()
-        .with_env_filter("info")
-        .try_init();
+    let _ = tracing_subscriber::fmt().with_env_filter("info").try_init();
 }
 
 #[tokio::test]
@@ -23,13 +22,22 @@ async fn test_full_integration_flow() {
             .expect("failed to create repository"),
     );
 
+    let event_repository = Arc::new(
+        SqliteEventRepository::new("sqlite::memory:")
+            .await
+            .expect("failed to create event repository"),
+    );
+
     let event_bus = Arc::new(EventBus::new(256));
     let storage = Arc::new(MemoryStorageProvider::new());
+    let crypto = Arc::new(DefaultCryptoProvider::new());
 
     let app = Application::new(
         repository.clone(),
         event_bus.clone(),
         storage.clone(),
+        crypto.clone(),
+        event_repository.clone(),
     );
 
     app.start().await.expect("failed to start application");
@@ -74,10 +82,23 @@ async fn test_create_and_delete_object() {
             .expect("failed to create repository"),
     );
 
+    let event_repository = Arc::new(
+        SqliteEventRepository::new("sqlite::memory:")
+            .await
+            .expect("failed to create event repository"),
+    );
+
     let event_bus = Arc::new(EventBus::new(256));
     let storage = Arc::new(MemoryStorageProvider::new());
+    let crypto = Arc::new(DefaultCryptoProvider::new());
 
-    let app = Application::new(repository.clone(), event_bus.clone(), storage.clone());
+    let app = Application::new(
+        repository.clone(),
+        event_bus.clone(),
+        storage.clone(),
+        crypto.clone(),
+        event_repository.clone(),
+    );
     app.start().await.unwrap();
 
     let file = FileObject::new("delete-me.txt".into(), 0, None);
@@ -88,10 +109,7 @@ async fn test_create_and_delete_object() {
     let exists = repository.get(&file_id).await.unwrap();
     assert!(exists.is_some());
 
-    app.object_service()
-        .delete_object(&file_id)
-        .await
-        .unwrap();
+    app.object_service().delete_object(&file_id).await.unwrap();
 
     let gone = repository.get(&file_id).await.unwrap();
     assert!(gone.is_none());
@@ -109,23 +127,29 @@ async fn test_event_emission_on_create() {
             .unwrap(),
     );
 
+    let event_repository = Arc::new(SqliteEventRepository::new("sqlite::memory:").await.unwrap());
+
     let event_bus = Arc::new(EventBus::new(256));
     let storage = Arc::new(MemoryStorageProvider::new());
+    let crypto = Arc::new(DefaultCryptoProvider::new());
     let mut rx = event_bus.subscribe();
 
-    let app = Application::new(repository.clone(), event_bus.clone(), storage.clone());
+    let app = Application::new(
+        repository.clone(),
+        event_bus.clone(),
+        storage.clone(),
+        crypto.clone(),
+        event_repository.clone(),
+    );
     app.start().await.unwrap();
 
     let file = FileObject::new("event-test.txt".into(), 5, None);
     app.object_service().create_file(file).await.unwrap();
 
-    let event = tokio::time::timeout(
-        std::time::Duration::from_secs(1),
-        rx.recv(),
-    )
-    .await
-    .expect("timed out waiting for event")
-    .expect("no event received");
+    let event = tokio::time::timeout(std::time::Duration::from_secs(1), rx.recv())
+        .await
+        .expect("timed out waiting for event")
+        .expect("no event received");
 
     assert_eq!(event.event_type(), "ObjectCreated");
 

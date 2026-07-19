@@ -98,8 +98,7 @@ impl PeerBoxConfig {
             std::fs::create_dir_all(parent)
                 .with_context(|| format!("failed to create config dir {}", parent.display()))?;
         }
-        let content = serde_json::to_string_pretty(self)
-            .context("failed to serialize config")?;
+        let content = serde_json::to_string_pretty(self).context("failed to serialize config")?;
         std::fs::write(&path, content)
             .with_context(|| format!("failed to write config to {}", path.display()))?;
         Ok(())

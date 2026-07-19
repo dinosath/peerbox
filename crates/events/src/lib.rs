@@ -127,8 +127,26 @@ mod tests {
 
     #[tokio::test]
     async fn test_event_types() {
-        assert_eq!(Event::ObjectCreated { id: ObjectId::from("x") }.event_type(), "ObjectCreated");
-        assert_eq!(Event::ObjectUpdated { id: ObjectId::from("x") }.event_type(), "ObjectUpdated");
-        assert_eq!(Event::ObjectDeleted { id: ObjectId::from("x") }.event_type(), "ObjectDeleted");
+        assert_eq!(
+            Event::ObjectCreated {
+                id: ObjectId::from("x")
+            }
+            .event_type(),
+            "ObjectCreated"
+        );
+        assert_eq!(
+            Event::ObjectUpdated {
+                id: ObjectId::from("x")
+            }
+            .event_type(),
+            "ObjectUpdated"
+        );
+        assert_eq!(
+            Event::ObjectDeleted {
+                id: ObjectId::from("x")
+            }
+            .event_type(),
+            "ObjectDeleted"
+        );
     }
 }

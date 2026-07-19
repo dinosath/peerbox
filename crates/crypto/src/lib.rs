@@ -30,6 +30,21 @@ impl KeyPair {
     pub fn node_id(&self) -> NodeId {
         NodeId(hex::encode(self.public_key().to_bytes()))
     }
+
+    pub fn sign(&self, data: &[u8]) -> Vec<u8> {
+        self.signing_key.sign(data).to_bytes().to_vec()
+    }
+
+    pub fn verify(&self, data: &[u8], sig: &[u8]) -> bool {
+        let signature = match Signature::from_slice(sig) {
+            Ok(s) => s,
+            Err(_) => return false,
+        };
+        self.signing_key
+            .verifying_key()
+            .verify_strict(data, &signature)
+            .is_ok()
+    }
 }
 
 #[async_trait::async_trait]
@@ -58,7 +73,11 @@ impl CryptoProvider for Ed25519CryptoProvider {
     async fn verify(&self, data: &[u8], signature: &[u8]) -> anyhow::Result<bool> {
         let signature = Signature::from_slice(signature)
             .map_err(|e| anyhow::anyhow!("invalid signature bytes: {}", e))?;
-        Ok(self.keypair.public_key().verify_strict(data, &signature).is_ok())
+        Ok(self
+            .keypair
+            .public_key()
+            .verify_strict(data, &signature)
+            .is_ok())
     }
 }
 
@@ -74,6 +93,12 @@ impl DefaultCryptoProvider {
     }
 }
 
+impl Default for DefaultCryptoProvider {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 #[async_trait::async_trait]
 impl CryptoProvider for DefaultCryptoProvider {
     async fn sign(&self, data: &[u8]) -> anyhow::Result<Vec<u8>> {
@@ -84,7 +109,11 @@ impl CryptoProvider for DefaultCryptoProvider {
     async fn verify(&self, data: &[u8], signature: &[u8]) -> anyhow::Result<bool> {
         let signature = Signature::from_slice(signature)
             .map_err(|e| anyhow::anyhow!("invalid signature bytes: {}", e))?;
-        Ok(self.keypair.public_key().verify_strict(data, &signature).is_ok())
+        Ok(self
+            .keypair
+            .public_key()
+            .verify_strict(data, &signature)
+            .is_ok())
     }
 }
 

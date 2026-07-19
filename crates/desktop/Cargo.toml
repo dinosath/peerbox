@@ -1,0 +1,33 @@
+[package]
+name = "dc-desktop"
+version = "0.1.0"
+edition = "2021"
+description = "Peerbox Makepad Desktop Application"
+
+[[bin]]
+name = "peerbox-desktop"
+path = "src/main.rs"
+
+[dependencies]
+common = { workspace = true }
+objects = { workspace = true }
+database = { workspace = true }
+events = { workspace = true }
+storage = { workspace = true }
+dc-core = { workspace = true }
+config = { workspace = true }
+manifest = { workspace = true }
+chunking = { workspace = true }
+verification = { workspace = true }
+p2p = { workspace = true }
+federation = { workspace = true }
+crypto = { workspace = true }
+tokio = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+bytes = { workspace = true }
+chrono = { workspace = true }
+async-trait = { workspace = true }

@@ -1,130 +1,139 @@
 # Peerbox
 
-A decentralized, local-first platform built in Rust. The system provides a local application
-runtime capable of managing objects, storing metadata, emitting events, and persisting data
-locally. All future components (desktop, server, CLI, federation, transport) will be built on
-this foundation.
+A decentralized, local-first platform built in Rust. Peerbox provides a local application runtime for managing objects, storing metadata, emitting events, and persisting data locally. Built-in support for P2P data transfer (Iroh), ActivityPub federation, and content-addressed chunking.
 
 ## Architecture
 
-The core runtime is completely independent from HTTP, UI frameworks, ActivityPub, Iroh,
-and any network protocols. It follows a clean layered architecture:
-
 ```
-common    — shared types (ObjectId, NodeId, Timestamp)
-objects   — domain objects (FileObject, FolderObject)
-database  — SQLite persistence via repository pattern
-events    — async event bus (tokio broadcast channels)
-storage   — pluggable storage abstraction
-crypto    — identity primitives (placeholder)
-core      — application runtime, object service, DI
+Applications  -->  dc-server (HTTP)  |  dcc (CLI)  |  Desktop (future)
+                      |
+Core Runtime  -->  ObjectService  |  EventBus  |  Application
+                      |
+Domain        -->  Objects  |  Crypto  |  Events  |  Manifest  |  Database
+                      |
+Infrastructure -->  Federation (ActivityPub)  |  P2P (Iroh)  |  Storage (FS/Mem)
 ```
 
-### Dependency Flow
-
-```
-objects
-   |
-   v
-database
-   |
-   v
- core
-   |
-   v
-applications (CLI, desktop, server, federation)
-```
-
-The core crate never depends on SQLx, Axum, Makepad, or ActivityPub directly.
-Database access goes through repository interfaces only.
+The core runtime is completely independent from HTTP, UI frameworks, ActivityPub, Iroh, and any network protocols. Database access goes through repository interfaces only.
 
 ## Workspace Structure
 
 ```
 peerbox/
-├── Cargo.toml          # Workspace root
+├── Cargo.toml              # Workspace root
+├── Cargo.lock
+├── Dockerfile              # Multi-stage Docker build
+├── docker-compose.yml      # Docker Compose deployment
+├── .dockerignore
+├── rust-toolchain.toml     # Rust toolchain config
+├── deny.toml               # License/security audit config
+├── README.md
 ├── crates/
-│   ├── common/         # Shared types
-│   ├── objects/        # Domain objects
-│   ├── database/       # SQLite persistence
-│   ├── events/         # Event bus
-│   ├── storage/        # Storage abstraction
-│   ├── crypto/         # Identity placeholders
-│   └── core/           # Application runtime
-├── tests/              # Integration tests
-├── data/               # Local data (SQLite DB)
-└── README.md
+│   ├── common/             # Shared types (ObjectId, NodeId, ContentHash, ChunkInfo)
+│   ├── objects/            # Domain objects (FileObject, FolderObject)
+│   ├── database/           # SQLite persistence via repository pattern
+│   ├── events/             # Async event bus (tokio broadcast)
+│   ├── storage/            # Pluggable storage (Memory, Filesystem)
+│   ├── crypto/             # Ed25519 identity and signing
+│   ├── core/               # Application runtime, object service, DI
+│   ├── config/             # Configuration loading (JSON)
+│   ├── server/             # Axum HTTP server (REST API + ActivityPub)
+│   ├── cli/                # CLI tool (dcc)
+│   ├── chunking/           # File chunking/assembly with Blake3
+│   ├── manifest/           # Content manifests with transport options
+│   ├── verification/       # Progressive chunk verification
+│   ├── federation/         # ActivityPub actors, activities, inbox/outbox
+│   └── p2p/                # Iroh-based P2P networking
+├── tests/                  # Integration tests
+├── charts/peerbox/         # Helm chart for Kubernetes
+└── docs/
+    ├── architecture.md     # Architecture overview
+    ├── development.md      # Development guide
+    ├── deployment.md       # Deployment guide
+    ├── security.md         # Security documentation
+    ├── p2p.md              # P2P networking docs
+    └── federation.md       # Federation docs
 ```
 
-## Database Setup
-
-SQLite is used for local persistence. The database file is created at `data/database.sqlite`
-by default. Tables are auto-created on first connection.
-
-### Tables
-
-- **objects** — stores all object metadata as JSON
-- **events** — persists event history
-
-## Running Tests
+## Quick Start
 
 ```bash
-# Run all unit tests
-cargo test
-
-# Run with logging
-RUST_LOG=info cargo test -- --nocapture
-
-# Run specific crate tests
-cargo test -p common
-cargo test -p objects
-cargo test -p database
-cargo test -p events
-cargo test -p storage
-cargo test -p core
-
-# Run integration tests
-cargo test -p integration-tests
-```
-
-## Building
-
-```bash
+# Build everything
 cargo build
-cargo build --release
+
+# Run the server
+cargo run -p dc-server
+
+# Run the CLI
+cargo run -p dcc -- status
+
+# Run tests
+cargo test --workspace
+```
+
+## Docker
+
+```bash
+# Build
+docker build -t peerbox:latest .
+
+# Run with Compose
+docker compose up -d
+```
+
+## Kubernetes (Helm)
+
+```bash
+helm install peerbox oci://ghcr.io/peerbox/peerbox/charts/peerbox \
+  --namespace peerbox --create-namespace
 ```
 
 ## Key Components
 
 ### Object Model
-
-Everything in the system is an Object. Each object has a unique ID and creation timestamp.
-Built-in types include `FileObject` and `FolderObject`.
+Everything is an Object with a unique ID and creation timestamp. Built-in types: `FileObject`, `FolderObject`.
 
 ### Repository Pattern
-
-Database access uses the repository pattern. The `ObjectRepository` trait defines the
-interface, and `SqliteObjectRepository` provides the SQLite implementation. This keeps
-SQLx isolated in the database crate.
+Database access uses the repository pattern. `ObjectRepository` trait defines the interface; `SqliteObjectRepository` provides SQLite implementation. SQLx is isolated in the database crate.
 
 ### Event System
-
-An asynchronous event bus built on tokio broadcast channels. Supports publishing events
-and subscribing with either raw receivers or handler closures. Events include
-`ObjectCreated`, `ObjectUpdated`, and `ObjectDeleted`.
+Async event bus on tokio broadcast channels. Events: `ObjectCreated`, `ObjectUpdated`, `ObjectDeleted`. Supports raw receivers and handler closures.
 
 ### Storage Abstraction
+Pluggable `StorageProvider` trait (put/get/delete). Implementations: `MemoryStorageProvider`, `FileSystemStorageProvider`.
 
-The `StorageProvider` trait defines a pluggable storage interface with `put`, `get`, and
-`delete` operations. `MemoryStorageProvider` is provided for testing.
+### Content Chunking
+Files are split into configurable-size chunks (default 1MB) with Blake3 content hashing. Progressive verification detects corruption during transfer.
 
-## Milestone 1 Completion Criteria
+### P2P Networking
+Iroh-based transport with mDNS discovery, bootstrap nodes, NAT traversal, and encrypted chunk transfer.
 
-- [x] Cargo workspace builds
-- [x] Core runs without network
-- [x] SQLite persistence works
-- [x] Objects can be created/read
-- [x] Event system works asynchronously
-- [x] Storage abstraction exists
-- [x] Tests pass
-- [x] No UI/network dependencies in core
+### ActivityPub Federation
+Metadata-level federation: activities describe objects for discovery; data transfer happens via P2P layer. Supports Create, Update, Delete, Follow, Accept, Announce activities.
+
+### Identity
+Ed25519 keypairs. Node identity = hex-encoded public key (64 chars). Self-certifying, no central authority.
+
+## Running Tests
+
+```bash
+# All tests
+cargo test --workspace
+
+# Specific crate
+cargo test -p common
+cargo test -p crypto
+cargo test -p server
+
+# With coverage
+cargo llvm-cov --workspace --all-features --lcov --output-path lcov.info
+```
+
+## Documentation
+
+- [Architecture](docs/architecture.md) - Overall design and crate dependencies
+- [Development](docs/development.md) - Setup, building, testing, CI/CD
+- [Deployment](docs/deployment.md) - Docker, Compose, Kubernetes, Helm
+- [Security](docs/security.md) - Identity, signing, encryption, auditing
+- [P2P Networking](docs/p2p.md) - Iroh, peer discovery, chunk transfer
+- [Federation](docs/federation.md) - ActivityPub, actors, activities, WebFinger

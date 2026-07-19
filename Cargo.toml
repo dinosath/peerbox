@@ -7,8 +7,16 @@ members = [
     "crates/events",
     "crates/storage",
     "crates/crypto",
+    "crates/federation",
     "crates/core",
     "crates/config",
+    "crates/chunking",
+    "crates/manifest",
+    "crates/server",
+    "crates/p2p",
+    "crates/verification",
+    "crates/cli",
+    "crates/desktop",
     "tests",
 ]
 
@@ -25,6 +33,10 @@ thiserror = "2"
 anyhow = "1"
 async-trait = "0.1"
 bytes = "1"
+reqwest = { version = "0.12", default-features = false, features = ["rustls-tls"] }
+url = "2"
+axum = "0.8"
+tower-http = { version = "0.6", features = ["cors", "trace"] }
 
 common = { path = "crates/common" }
 objects = { path = "crates/objects" }
@@ -32,5 +44,11 @@ database = { path = "crates/database" }
 events = { path = "crates/events" }
 storage = { path = "crates/storage" }
 crypto = { path = "crates/crypto" }
+federation = { path = "crates/federation" }
 config = { path = "crates/config" }
 dc-core = { path = "crates/core" }
+manifest = { path = "crates/manifest" }
+chunking = { path = "crates/chunking" }
+dc-server = { path = "crates/server" }
+p2p = { path = "crates/p2p" }
+verification = { path = "crates/verification" }
