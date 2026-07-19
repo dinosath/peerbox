@@ -3,8 +3,8 @@ use std::sync::Arc;
 use bytes::Bytes;
 use common::ObjectId;
 use database::StoredObject;
-use peerbox_core::Application;
 use objects::{FileObject, FolderObject};
+use peerbox_core::Application;
 
 pub struct FileOps {
     app: Arc<Application>,

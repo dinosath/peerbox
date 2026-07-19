@@ -132,12 +132,14 @@ mod tests {
 
     #[test]
     fn test_serialization_roundtrip() {
-        let mut config = PeerBoxConfig::default();
-        config.node_name = "test-node".to_string();
-        config.listen_port = 8080;
-        config.bootstrap_nodes = vec!["node1:8080".to_string(), "node2:8080".to_string()];
-        config.federation_enabled = true;
-        config.log_level = "debug".to_string();
+        let config = PeerBoxConfig {
+            node_name: "test-node".to_string(),
+            listen_port: 8080,
+            bootstrap_nodes: vec!["node1:8080".to_string(), "node2:8080".to_string()],
+            federation_enabled: true,
+            log_level: "debug".to_string(),
+            ..Default::default()
+        };
 
         let json = serde_json::to_string_pretty(&config).unwrap();
         let deserialized: PeerBoxConfig = serde_json::from_str(&json).unwrap();
@@ -151,9 +153,11 @@ mod tests {
 
     #[test]
     fn test_load_from_path() {
-        let mut config = PeerBoxConfig::default();
-        config.node_name = "loaded-node".to_string();
-        config.listen_port = 9999;
+        let config = PeerBoxConfig {
+            node_name: "loaded-node".to_string(),
+            listen_port: 9999,
+            ..Default::default()
+        };
 
         let dir = tempfile::tempdir().unwrap();
         let config_path = dir.path().join("config.json");
@@ -178,8 +182,10 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let config_path = dir.path().join("config.json");
 
-        let mut config = PeerBoxConfig::default();
-        config.node_name = "save-test".to_string();
+        let config = PeerBoxConfig {
+            node_name: "save-test".to_string(),
+            ..Default::default()
+        };
 
         let json = serde_json::to_string_pretty(&config).unwrap();
         std::fs::write(&config_path, json).unwrap();

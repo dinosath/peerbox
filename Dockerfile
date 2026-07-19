@@ -17,7 +17,7 @@ COPY tests/ tests/
 
 ARG APP_VERSION=0.1.0
 
-RUN cargo build --release --workspace
+RUN cargo build --release -p peerbox-server -p peerbox-cli
 
 FROM debian:bookworm-slim
 

@@ -248,11 +248,7 @@ mod tests {
         assert_eq!(result.chunk_infos.len(), 5);
 
         for info in &result.chunk_infos {
-            if info.index < 4 {
-                assert_eq!(info.size, DEFAULT_CHUNK_SIZE);
-            } else {
-                assert_eq!(info.size, DEFAULT_CHUNK_SIZE);
-            }
+            assert_eq!(info.size, DEFAULT_CHUNK_SIZE);
         }
 
         let mut assembler = ChunkAssembler::new();

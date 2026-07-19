@@ -2,8 +2,8 @@ use std::sync::Arc;
 
 use makepad_widgets::*;
 
-use crate::core::build_peerbox_app;
 use crate::commands::identity_ops::IdentityOps;
+use crate::core::build_peerbox_app;
 
 live_design! {
     link makepad_widgets;
@@ -178,7 +178,8 @@ app_main!(App);
 
 #[derive(Live, LiveHook)]
 pub struct App {
-    #[live] ui: WidgetRef,
+    #[live]
+    ui: WidgetRef,
 }
 
 impl LiveRegister for App {

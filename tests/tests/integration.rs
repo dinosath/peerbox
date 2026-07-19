@@ -1,11 +1,11 @@
 use std::sync::Arc;
 
-use crypto::{CryptoProvider, DefaultCryptoProvider};
-use database::{EventRepository, ObjectRepository};
+use crypto::DefaultCryptoProvider;
+use database::ObjectRepository;
 use database::{SqliteEventRepository, SqliteObjectRepository};
-use peerbox_core::Application;
 use events::EventBus;
 use objects::FileObject;
+use peerbox_core::Application;
 use storage::MemoryStorageProvider;
 
 fn init_tracing() {

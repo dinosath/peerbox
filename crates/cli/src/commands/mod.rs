@@ -14,10 +14,10 @@ use common::NodeId;
 use config::PeerBoxConfig;
 use crypto::{Ed25519CryptoProvider, KeyPair};
 use database::{EventRepository, ObjectRepository, SqliteEventRepository, SqliteObjectRepository};
-use peerbox_core::Application;
 use events::EventBus;
 use p2p::simulated::{SimulatedNetwork, SimulatedTransport};
 use p2p::types::PeerId;
+use peerbox_core::Application;
 use storage::FileSystemStorageProvider;
 
 #[derive(Parser)]
