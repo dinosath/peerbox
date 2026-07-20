@@ -19,48 +19,24 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libssl-dev \
-            libsqlite3-dev \
-            libwayland-dev \
-            libxkbcommon-dev
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
       - uses: Swatinem/rust-cache@v2
-      - run: cargo test --workspace --all-features
+      - run: mise run test
 
   coverage:
     name: Coverage
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libssl-dev \
-            libsqlite3-dev \
-            libwayland-dev \
-            libxkbcommon-dev
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
         with:
-          components: llvm-tools-preview
+          install: true
+          cache: true
       - uses: Swatinem/rust-cache@v2
-      - uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-llvm-cov
-      - run: |
-          cargo llvm-cov --workspace --all-features \
-            --lcov --output-path lcov.info \
-            --fail-under-lines 80
+      - run: mise run coverage
       - uses: codecov/codecov-action@v4
         with:
           files: lcov.info
@@ -83,7 +59,11 @@ jobs:
             libssl-dev \
             libsqlite3-dev \
             libwayland-dev \
-            libxkbcommon-dev
+            libxkbcommon-dev \
+            libxcursor-dev \
+            libx11-dev \
+            libasound2-dev \
+            libpulse-dev
 
       - uses: dtolnay/rust-toolchain@stable
         with:

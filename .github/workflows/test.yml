@@ -22,21 +22,12 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libssl-dev \
-            libsqlite3-dev \
-            libwayland-dev \
-            libxkbcommon-dev
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
       - uses: Swatinem/rust-cache@v2
-      - run: cargo test --all --all-features -- --include-ignored
+      - run: mise run test:extended
 
   test-doc:
     name: Test Doc (${{ matrix.os }})
@@ -47,18 +38,9 @@ jobs:
         os: [ubuntu-latest, macos-latest]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libssl-dev \
-            libsqlite3-dev \
-            libwayland-dev \
-            libxkbcommon-dev
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
       - uses: Swatinem/rust-cache@v2
-      - run: cargo test --doc --all-features
+      - run: mise run test:doc

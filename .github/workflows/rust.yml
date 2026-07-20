@@ -19,52 +19,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
         with:
-          components: rustfmt
-      - run: cargo fmt --all -- --check
+          install: true
+          cache: true
+      - uses: Swatinem/rust-cache@v2
+      - run: mise run fmt
 
   clippy:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libssl-dev \
-            libsqlite3-dev \
-            libwayland-dev \
-            libxkbcommon-dev
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
         with:
-          components: clippy
+          install: true
+          cache: true
       - uses: Swatinem/rust-cache@v2
-      - run: cargo clippy --all-targets --all-features -- -D warnings
+      - run: mise run clippy
 
   test:
     name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            pkg-config \
-            libssl-dev \
-            libsqlite3-dev \
-            libwayland-dev \
-            libxkbcommon-dev
-
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: jdx/mise-action@v2
+        with:
+          install: true
+          cache: true
       - uses: Swatinem/rust-cache@v2
-      - run: cargo test --all --all-features
+      - run: mise run test
 
   audit:
     name: Audit

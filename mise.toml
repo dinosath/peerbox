@@ -1,0 +1,67 @@
+[tools]
+rust = "stable"
+
+[tasks.fmt]
+description = "Check code formatting (Rust CI: fmt)"
+run = "cargo fmt --all -- --check"
+
+[tasks.clippy]
+description = "Run clippy lints (Rust CI: clippy)"
+run = "cargo clippy --workspace --exclude peerbox-desktop --all-targets --all-features -- -D warnings"
+
+[tasks.test]
+description = "Run all workspace tests (Rust CI: test)"
+run = "cargo test --workspace --exclude peerbox-desktop --all-features"
+
+[tasks."test:extended"]
+description = "Run all tests including ignored (Extended Tests)"
+run = "cargo test --workspace --exclude peerbox-desktop --all-features -- --include-ignored"
+
+[tasks."test:doc"]
+description = "Run doc tests (Extended Tests: test-doc)"
+run = "cargo test --doc --workspace --exclude peerbox-desktop --all-features"
+
+[tasks.audit]
+description = "Run cargo audit (Security Audit)"
+run = "cargo install cargo-audit && cargo audit --deny warnings --ignore RUSTSEC-2023-0071"
+
+[tasks.deny]
+description = "Run cargo deny check (Security Audit / Rust CI: deny)"
+run = "cargo install cargo-deny && cargo deny check"
+
+[tasks.coverage]
+description = "Generate code coverage (Code Coverage)"
+run = """
+cargo install cargo-llvm-cov && \
+cargo llvm-cov --workspace --exclude peerbox-desktop --all-features \
+  --lcov --output-path lcov.info \
+  --fail-under-lines 80
+"""
+
+[tasks."build:desktop-linux"]
+description = "Build desktop app for Linux (Builds: build-desktop-linux)"
+run = "cargo build -p peerbox-desktop --release"
+
+[tasks."build:docker"]
+description = "Build Docker image (Docker Build)"
+run = "docker build -t peerbox:latest ."
+
+[tasks."helm:lint"]
+description = "Lint Helm chart (Helm Chart: lint)"
+run = "helm lint charts/peerbox"
+
+[tasks."helm:package"]
+description = "Package Helm chart (Helm Chart: release)"
+run = "helm package charts/peerbox --destination .deploy"
+
+[tasks."ci:rust"]
+description = "Run full Rust CI (fmt + clippy + test)"
+depends = ["fmt", "clippy", "test"]
+
+[tasks."ci:security"]
+description = "Run full Security Audit (audit + deny)"
+depends = ["audit", "deny"]
+
+[tasks."ci:all"]
+description = "Run all CI checks"
+depends = ["fmt", "clippy", "test", "test:extended", "test:doc", "audit", "deny"]
