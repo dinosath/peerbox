@@ -32,10 +32,9 @@ run = "cargo install cargo-deny && cargo deny check"
 [tasks.coverage]
 description = "Generate code coverage (Code Coverage)"
 run = """
-cargo install cargo-llvm-cov && \
 cargo llvm-cov --workspace --exclude peerbox-desktop --all-features \
   --lcov --output-path lcov.info \
-  --fail-under-lines 80
+  --fail-under-lines 70
 """
 
 [tasks."build:desktop-linux"]

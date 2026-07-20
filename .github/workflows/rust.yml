@@ -55,9 +55,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: rustsec/audit-check@v2.0.0
+      - uses: jdx/mise-action@v2
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          install: true
+          cache: true
+      - run: mise run audit
 
   deny:
     name: Deny

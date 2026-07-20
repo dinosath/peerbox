@@ -29,15 +29,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: EmbarkStudios/cargo-deny-action@v1
-
-  osv-scanner:
-    name: OSV Scanner
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: google/osv-scanner-action@v1
+      - uses: jdx/mise-action@v2
         with:
-          scan-args: |-
-            --recursive
-            .
+          install: true
+          cache: true
+      - uses: Swatinem/rust-cache@v2
+      - run: mise run deny

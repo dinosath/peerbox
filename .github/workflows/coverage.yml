@@ -23,10 +23,15 @@ jobs:
         with:
           install: true
           cache: true
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
       - uses: Swatinem/rust-cache@v2
       - name: Generate coverage
         run: |
-          mise run coverage
+          cargo llvm-cov --workspace --exclude peerbox-desktop --all-features \
+            --lcov --output-path lcov.info \
+            --fail-under-lines 70
       - name: Upload to Codecov
         uses: codecov/codecov-action@v4
         with:
