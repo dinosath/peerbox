@@ -23,7 +23,7 @@ jobs:
       - name: Run release-plz
         uses: release-plz/release-plz@release-plz-v0.3.160
         with:
-          command: release
+          entryPoint: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -47,6 +47,6 @@ jobs:
       - name: Run release-plz
         uses: release-plz/release-plz@release-plz-v0.3.160
         with:
-          command: release-pr
+          entryPoint: release-pr
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
